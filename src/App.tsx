@@ -1,6 +1,8 @@
 import { Routes, Route } from "react-router-dom";
 
 import './globals.css'
+import { Toaster } from "@/components/ui/toaster"
+
 // Public Routes
 import AuthLayout from "./_auth/AuthLayout";
 import SignInForm from "./_auth/forms/SignInForm";
@@ -26,6 +28,8 @@ const App = () => {
                     <Route index element={<Home />} />
                 </Route>
             </Routes>
+
+            <Toaster />
         </main>
     )
 }

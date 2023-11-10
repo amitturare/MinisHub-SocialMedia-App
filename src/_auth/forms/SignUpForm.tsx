@@ -13,10 +13,10 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { SignUpValidation } from "@/lib/validation"
 import { Button } from "@/components/ui/button"
 import Loader from "@/components/shared/Loader";
 
+import { SignUpValidation } from "@/lib/validation"
 import { useCreateUserAccountMutation, useSignInAccountMutation } from "@/lib/react-query/queriesAndMutations";
 import { useUserContext } from "@/context/AuthContext";
 

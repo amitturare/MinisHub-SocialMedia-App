@@ -5,8 +5,9 @@ import {
 	useInfiniteQuery, // Infinite Scrolling
 } from "@tanstack/react-query";
 
-import { INewUser, SigningInUser } from "@/types";
-import { createUserAccount, signInAccount, signOutAccount } from "../appwrite/api";
+import { INewPost, INewUser, ISigningInUser } from "@/types";
+import { createUserAccount, signInAccount, signOutAccount, createNewPost } from "../appwrite/api";
+import { QUERY_KEYS } from "./queryKeys";
 
 export const useCreateUserAccountMutation = () => {
 	return useMutation({
@@ -16,12 +17,25 @@ export const useCreateUserAccountMutation = () => {
 
 export const useSignInAccountMutation = () => {
 	return useMutation({
-		mutationFn: (user: SigningInUser) => signInAccount(user),
+		mutationFn: (user: ISigningInUser) => signInAccount(user),
 	});
 };
 
 export const useSignOutAccountMutation = () => {
 	return useMutation({
 		mutationFn: signOutAccount,
+	});
+};
+
+export const useCreatePostMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (post: INewPost) => createNewPost(post),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
+			});
+		},
 	});
 };

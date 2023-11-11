@@ -1,3 +1,11 @@
+export type INewPost = {
+	userId: string;
+	caption: string;
+	file: File[];
+	location?: string;
+	tags?: string;
+};
+
 export type INavLink = {
 	imgURL: string;
 	route: string;
@@ -29,4 +37,4 @@ export type INewUser = {
 	password: string;
 };
 
-export type SigningInUser = { email: string; password: string };
+export type ISigningInUser = { email: string; password: string };

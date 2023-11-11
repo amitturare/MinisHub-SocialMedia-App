@@ -13,5 +13,8 @@ export const SignInValidation = z.object({
 });
 
 export const CreatePostValidation = z.object({
-	username: z.string(),
+	caption: z.string().min(1).max(2200),
+	file: z.custom<File[]>(),
+	location: z.string().min(1).max(2200),
+	tags: z.string(),
 });

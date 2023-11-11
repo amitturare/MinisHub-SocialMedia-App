@@ -1,6 +1,8 @@
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { Models } from "appwrite"
+import { useNavigate } from "react-router-dom"
 
 import {
     Form,
@@ -13,23 +15,51 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "../ui/textarea"
-import { CreatePostValidation } from "@/lib/validation"
+import { useToast } from "../ui/use-toast"
 import FileUploader from "../shared/FileUploader"
 
-const PostForm = () => {
+import { CreatePostValidation } from "@/lib/validation"
+import { useCreatePostMutation } from "@/lib/react-query/queriesAndMutations"
+import { useUserContext } from "@/context/AuthContext"
+
+
+type PostFormProps = {
+    post?: Models.Document;
+}
+
+const PostForm = ({ post }: PostFormProps) => {
+    const { toast } = useToast()
+    const navigate = useNavigate()
+
+    const { user } = useUserContext()
+    const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePostMutation();
+
     // 1. Define your form.
     const form = useForm<z.infer<typeof CreatePostValidation>>({
         resolver: zodResolver(CreatePostValidation),
         defaultValues: {
-            username: "",
+            caption: post ? post?.caption : "",
+            file: [],
+            location: post ? post?.location : "",
+            tags: post ? post?.tags.join(',') : ""
         },
     })
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof CreatePostValidation>) {
+    async function onSubmit(values: z.infer<typeof CreatePostValidation>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values)
+        const newPost = await createPost({ ...values, userId: user.id })
+
+        if (!newPost) {
+            toast({
+                variant: "destructive",
+                title: "Uh oh! Post hadn't been created.",
+                description: "Refresh and try again."
+            });
+        }
+
+        navigate("/")
     }
 
     return (
@@ -56,7 +86,7 @@ const PostForm = () => {
                         <FormItem>
                             <FormLabel className="shad-form_label">Add Photos</FormLabel>
                             <FormControl>
-                                <FileUploader />
+                                <FileUploader fieldChange={field.onChange} mediaUrl={post?.imageUrl} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
@@ -70,7 +100,7 @@ const PostForm = () => {
                         <FormItem>
                             <FormLabel className="shad-form_label">Add Location</FormLabel>
                             <FormControl>
-                                <Input type="text" className="shad-input" />
+                                <Input type="text" className="shad-input" {...field} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>
@@ -84,7 +114,7 @@ const PostForm = () => {
                         <FormItem>
                             <FormLabel className="shad-form_label">Add Tags (separated by comma " , ")</FormLabel>
                             <FormControl>
-                                <Input type="text" className="shad-input" placeholder="Culture, Travel, Photography" />
+                                <Input type="text" className="shad-input" placeholder="Culture, Travel, Photography" {...field} />
                             </FormControl>
                             <FormMessage className="shad-form_message" />
                         </FormItem>

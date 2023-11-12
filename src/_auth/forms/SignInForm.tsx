@@ -56,8 +56,8 @@ const SignInForm = () => {
         } else {
             return toast({
                 variant: "destructive",
-                title: "Uh oh! Sign up failed.",
-                description: "Refresh and try again."
+                title: "Uh oh! Sign in failed.",
+                description: "Try again with correct credentials."
             });
         }
     }

@@ -91,11 +91,12 @@ export async function createNewPost(post: INewPost) {
 		if (!uploadedFile) throw Error;
 
 		// Get file url
-		const fileUrl = getFilePreview(uploadedFile.$id);
+		const fileUrl = await getFilePreview(uploadedFile.$id);
 		if (!fileUrl) {
 			await deleteFile(uploadedFile.$id);
 			throw Error;
 		}
+		console.log(fileUrl);
 
 		// Convert tags to array
 		const tags = post.tags?.replace(/ /g, "").split(",") || [];
@@ -107,7 +108,7 @@ export async function createNewPost(post: INewPost) {
 			{
 				creator: post.userId,
 				caption: post.caption,
-				imageUrl: fileUrl,
+				imageUrl: fileUrl.href,
 				imageId: uploadedFile.$id,
 				location: post.location,
 				tags: tags,
@@ -148,6 +149,72 @@ export async function getFilePreview(fileId: string) {
 export async function deleteFile(fileId: string) {
 	try {
 		await storage.deleteFile(appwriteConfig.storageId, fileId);
+
+		return { status: "ok" };
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+export async function getRecentPosts() {
+	const posts = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.postsCollectionId, [
+		Query.orderDesc("$createdAt"),
+		Query.limit(20),
+	]);
+
+	if (!posts) throw Error;
+
+	return posts;
+}
+
+export async function likePost(postId: string, likesArray: string[]) {
+	try {
+		const updatedPost = await databases.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.postsCollectionId,
+			postId,
+			{
+				likes: likesArray,
+			}
+		);
+
+		if (!updatedPost) throw Error;
+
+		return updatedPost;
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+export async function savePost(postId: string, userId: string) {
+	try {
+		const savedPost = await databases.createDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.savesCollectionId,
+			ID.unique(),
+			{
+				user: userId,
+				post: postId,
+			}
+		);
+
+		if (!savedPost) throw Error;
+
+		return savedPost;
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+export async function deleteSavedPost(savedRecordId: string) {
+	try {
+		const statusCode = await databases.deleteDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.savesCollectionId,
+			savedRecordId
+		);
+
+		if (!statusCode) throw Error;
 
 		return { status: "ok" };
 	} catch (e) {

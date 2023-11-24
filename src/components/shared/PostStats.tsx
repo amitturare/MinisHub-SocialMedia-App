@@ -42,17 +42,20 @@ const PostStats = ({ post, userId }: IPostStats) => {
     const savedPostRecord = user?.save.find((record: Models.Document) =>
         record.post.$id === post.$id
     )
-    useEffect(() => { savedPostRecord ? true : false }, [user])
-    const handleSavePost = (e: React.MouseEvent) => {
+    console.log(savedPostRecord);
+    useEffect(() => {
+        setIsSaved(savedPostRecord ? true : false)
+    }, [user])
+    const handleSavePost = (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         e.stopPropagation();
 
         if (savedPostRecord) {
             setIsSaved(false);
-            deleteSavedPost(savedPostRecord.$id)
-        } else {
-            setIsSaved(true)
-            savePost({ postId: post.$id, userId })
+            return deleteSavedPost(savedPostRecord.$id)
         }
+        setIsSaved(true)
+        savePost({ postId: post.$id, userId })
+
     }
 
     return (

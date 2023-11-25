@@ -6,6 +6,16 @@ export type INewPost = {
 	tags?: string;
 };
 
+export type IUpdatePost = {
+	postId: string;
+	caption: string;
+	imageId: string;
+	imageUrl: string;
+	file: File[];
+	location?: string;
+	tags?: string;
+};
+
 export type INavLink = {
 	imgURL: string;
 	route: string;

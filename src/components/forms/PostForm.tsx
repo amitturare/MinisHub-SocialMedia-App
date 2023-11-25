@@ -19,20 +19,22 @@ import { useToast } from "../ui/use-toast"
 import FileUploader from "../shared/FileUploader"
 
 import { CreatePostValidation } from "@/lib/validation"
-import { useCreatePostMutation } from "@/lib/react-query/queriesAndMutations"
+import { useCreatePostMutation, useUpdatePostMutation } from "@/lib/react-query/queriesAndMutations"
 import { useUserContext } from "@/context/AuthContext"
 
 
 type PostFormProps = {
     post?: Models.Document;
+    action: 'Create' | 'Update';
 }
 
-const PostForm = ({ post }: PostFormProps) => {
+const PostForm = ({ post, action }: PostFormProps) => {
     const { toast } = useToast()
     const navigate = useNavigate()
 
     const { user } = useUserContext()
     const { mutateAsync: createPost, isPending: isLoadingCreate } = useCreatePostMutation();
+    const { mutateAsync: updatePost, isPending: isLoadingUpdate } = useUpdatePostMutation();
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof CreatePostValidation>>({
@@ -49,19 +51,38 @@ const PostForm = ({ post }: PostFormProps) => {
     async function onSubmit(values: z.infer<typeof CreatePostValidation>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
+
+        if (post && action === 'Update') {
+            const updatedPost = await updatePost({
+                ...values,
+                postId: post.$id,
+                imageId: post?.imageId,
+                imageUrl: post?.imageUrl
+            })
+
+            if (!updatedPost) {
+                toast({
+                    variant: "destructive",
+                    title: "Uh oh! Post hasn't been updated.",
+                    description: "Refresh and try again."
+                });
+            }
+
+            return navigate(`/posts/${post.$id}`)
+        }
         const newPost = await createPost({ ...values, userId: user.id })
 
         if (!newPost) {
             toast({
                 variant: "destructive",
-                title: "Uh oh! Post hadn't been created.",
+                title: "Uh oh! Post hasn't been created.",
                 description: "Refresh and try again."
             });
         }
 
         navigate("/")
     }
-
+    console.log(post?.imageUrl);
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">
@@ -123,7 +144,9 @@ const PostForm = ({ post }: PostFormProps) => {
 
                 <div className="flex gap-4 items-center justify-end">
                     <Button type="button" className="shad-button_dark_4">Cancel</Button>
-                    <Button type="submit" className="shad-button_primary whitespace-nowrap">Submit</Button>
+                    <Button type="submit" className="shad-button_primary whitespace-nowrap" disabled={isLoadingCreate || isLoadingUpdate}>
+                        {isLoadingCreate || isLoadingUpdate ? 'Loading...' : `${action} Post`}
+                    </Button>
                 </div>
             </form>
         </Form>

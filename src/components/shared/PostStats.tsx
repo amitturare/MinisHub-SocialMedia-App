@@ -3,7 +3,7 @@ import { Models } from "appwrite"
 
 import Loader from "./Loader";
 
-import { useDeleteSavedPostMutation, useGetCurrentUser, useLikePostMutation, useSavePostMutation } from "@/lib/react-query/queriesAndMutations";
+import { useDeleteSavedPostMutation, useGetCurrentUserMutation, useLikePostMutation, useSavePostMutation } from "@/lib/react-query/queriesAndMutations";
 import { checkIsLiked } from "@/lib/utils";
 
 type IPostStats = {
@@ -18,7 +18,7 @@ const PostStats = ({ post, userId }: IPostStats) => {
 
     const likesList = post.likes.map((user: Models.Document) => user.$id)
 
-    const { data: user } = useGetCurrentUser()
+    const { data: user } = useGetCurrentUserMutation()
 
     const [likes, setLikes] = useState<string[]>(likesList);
     const [isSaved, setIsSaved] = useState<boolean>(false);
@@ -42,7 +42,6 @@ const PostStats = ({ post, userId }: IPostStats) => {
     const savedPostRecord = user?.save.find((record: Models.Document) =>
         record.post.$id === post.$id
     )
-    console.log(savedPostRecord);
     useEffect(() => {
         setIsSaved(savedPostRecord ? true : false)
     }, [user])

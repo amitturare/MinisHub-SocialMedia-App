@@ -5,7 +5,7 @@ import {
 	useInfiniteQuery, // Infinite Scrolling
 } from "@tanstack/react-query";
 
-import { INewPost, INewUser, ISigningInUser } from "@/types";
+import { INewPost, INewUser, ISigningInUser, IUpdatePost } from "@/types";
 import {
 	createUserAccount,
 	signInAccount,
@@ -16,6 +16,9 @@ import {
 	savePost,
 	deleteSavedPost,
 	getCurrentUser,
+	getPostById,
+	updatePost,
+	deletePost,
 } from "../appwrite/api";
 import { QUERY_KEYS } from "./queryKeys";
 
@@ -117,9 +120,43 @@ export const useDeleteSavedPostMutation = () => {
 	});
 };
 
-export const useGetCurrentUser = () => {
+export const useGetCurrentUserMutation = () => {
 	return useQuery({
 		queryKey: [QUERY_KEYS.GET_CURRENT_USER],
 		queryFn: getCurrentUser,
+	});
+};
+
+export const useGetPostByIdMutation = (postId: string) => {
+	return useQuery({
+		queryKey: [QUERY_KEYS.GET_POST_BY_ID, postId],
+		queryFn: () => getPostById(postId),
+		enabled: !!postId, // To not fetch constantly for the same postId
+	});
+};
+
+export const useUpdatePostMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (post: IUpdatePost) => updatePost(post),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.GET_POST_BY_ID, data?.id],
+			});
+		},
+	});
+};
+
+export const useDeletePostMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ postId, imageId }: { postId: string; imageId: string }) => deletePost(postId, imageId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
+			});
+		},
 	});
 };

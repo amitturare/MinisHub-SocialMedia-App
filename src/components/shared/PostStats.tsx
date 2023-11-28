@@ -7,7 +7,7 @@ import { useDeleteSavedPostMutation, useGetCurrentUserMutation, useLikePostMutat
 import { checkIsLiked } from "@/lib/utils";
 
 type IPostStats = {
-    post: Models.Document;
+    post?: Models.Document;
     userId: string;
 }
 
@@ -16,7 +16,7 @@ const PostStats = ({ post, userId }: IPostStats) => {
     const { mutateAsync: savePost, isPending: isSavingPost } = useSavePostMutation()
     const { mutateAsync: deleteSavedPost, isPending: isDeletingSaved } = useDeleteSavedPostMutation()
 
-    const likesList = post.likes.map((user: Models.Document) => user.$id)
+    const likesList = post?.likes.map((user: Models.Document) => user.$id)
 
     const { data: user } = useGetCurrentUserMutation()
 
@@ -36,11 +36,11 @@ const PostStats = ({ post, userId }: IPostStats) => {
         }
 
         setLikes(newLikes)
-        likePost({ postId: post.$id, likesArray: newLikes })
+        likePost({ postId: post?.$id || '', likesArray: newLikes })
     }
 
     const savedPostRecord = user?.save.find((record: Models.Document) =>
-        record.post.$id === post.$id
+        record.post.$id === post?.$id
     )
     useEffect(() => {
         setIsSaved(savedPostRecord ? true : false)
@@ -53,7 +53,7 @@ const PostStats = ({ post, userId }: IPostStats) => {
             return deleteSavedPost(savedPostRecord.$id)
         }
         setIsSaved(true)
-        savePost({ postId: post.$id, userId })
+        savePost({ postId: post?.$id || '', userId })
 
     }
 

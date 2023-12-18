@@ -22,6 +22,7 @@ import {
 	getInfinitePosts,
 	searchPosts,
 	getInfiniteUsers,
+	getUsers,
 } from "../appwrite/api";
 import { QUERY_KEYS } from "./queryKeys";
 
@@ -43,7 +44,7 @@ export const useSignOutAccountMutation = () => {
 	});
 };
 
-export const useGetUsersMutation = () => {
+export const useGetInfiniteUsersMutation = () => {
 	return useInfiniteQuery({
 		queryKey: [QUERY_KEYS.GET_INFINITE_USERS],
 		queryFn: getInfiniteUsers,
@@ -56,6 +57,13 @@ export const useGetUsersMutation = () => {
 
 			return lastId;
 		},
+	});
+};
+
+export const useGetUsersMutation = () => {
+	return useQuery({
+		queryKey: [QUERY_KEYS.GET_USERS],
+		queryFn: getUsers,
 	});
 };
 

@@ -104,6 +104,21 @@ export async function getInfiniteUsers({ pageParam }: { pageParam: number }) {
 	}
 }
 
+export async function getUsers() {
+	try {
+		const users = await databases.listDocuments(appwriteConfig.databaseId, appwriteConfig.usersCollectionId, [
+			Query.orderDesc("$createdAt"),
+			Query.limit(10),
+		]);
+
+		if (!users) throw Error;
+
+		return users;
+	} catch (e) {
+		console.log(e);
+	}
+}
+
 // POST CRUD
 export async function createNewPost(post: INewPost) {
 	try {

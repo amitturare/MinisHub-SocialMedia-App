@@ -4,11 +4,11 @@ import { useInView } from 'react-intersection-observer'
 import Loader from '@/components/shared/Loader'
 import UserCard from "@/components/shared/UserCard";
 
-import { useGetUsersMutation, } from "@/lib/react-query/queriesAndMutations";
+import { useGetInfiniteUsersMutation } from "@/lib/react-query/queriesAndMutations";
 
 const AllUsers = () => {
     const { ref, inView } = useInView()
-    const { data: creators, fetchNextPage, hasNextPage } = useGetUsersMutation();
+    const { data: creators, fetchNextPage, hasNextPage } = useGetInfiniteUsersMutation();
 
     useEffect(() => {
         if (inView) fetchNextPage()

@@ -82,6 +82,28 @@ export async function signOutAccount() {
 	}
 }
 
+export async function getInfiniteUsers({ pageParam }: { pageParam: number }) {
+	const queries = [Query.limit(20)];
+
+	if (pageParam) {
+		queries.push(Query.cursorAfter(pageParam.toString()));
+	}
+
+	try {
+		const users = await databases.listDocuments(
+			appwriteConfig.databaseId,
+			appwriteConfig.usersCollectionId,
+			queries
+		);
+
+		if (!users) throw Error;
+
+		return users;
+	} catch (e) {
+		console.log(e);
+	}
+}
+
 // POST CRUD
 export async function createNewPost(post: INewPost) {
 	try {
@@ -301,7 +323,7 @@ export async function deletePost(postId: string, imageId: string) {
 }
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
-	const queries = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+	const queries = [Query.orderDesc("$updatedAt"), Query.limit(5)];
 
 	if (pageParam) {
 		queries.push(Query.cursorAfter(pageParam.toString()));

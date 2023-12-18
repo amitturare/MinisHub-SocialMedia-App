@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useInView } from 'react-intersection-observer'
 
 import { Input } from '@/components/ui/input'
 import SearchResults from '@/components/shared/SearchResults'
@@ -10,11 +11,16 @@ import useDebounce from '@/hooks/useDebounce'
 
 
 const Explore = () => {
-    const { data: posts, fetchNextPost, hasNextPage } = useGetPostsMutation();
+    const { ref, inView } = useInView()
+    const { data: posts, fetchNextPage, hasNextPage } = useGetPostsMutation();
 
     const [searchVal, setSearchVal] = useState('')
     const debouncedValue = useDebounce(searchVal, 500);
     const { data: searchedPosts, isFetching: isSearchFetching } = useSearchPostsMutation(debouncedValue)
+
+    useEffect(() => {
+        if (inView && !searchVal) fetchNextPage()
+    }, [inView, searchVal])
 
     if (!posts) {
         return (
@@ -71,6 +77,12 @@ const Explore = () => {
                     ))
                 }
             </div>
+
+            {hasNextPage && !searchVal && (
+                <div ref={ref} className='mt-10'>
+                    <Loader />
+                </div>
+            )}
         </div>
     )
 }

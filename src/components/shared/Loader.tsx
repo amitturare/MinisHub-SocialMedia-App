@@ -1,8 +1,8 @@
-const Loader = () => {
+const Loader = ({height = 42, width = 42}) => {
     return (
         <div className="flex-center w-full">
             <img src="/assets/icons/loader.svg" alt="loader"
-                width={42} height={42} />
+                width={height} height={width} />
         </div>
     )
 }

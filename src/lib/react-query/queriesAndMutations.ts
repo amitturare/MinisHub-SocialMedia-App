@@ -21,6 +21,7 @@ import {
 	deletePost,
 	getInfinitePosts,
 	searchPosts,
+	getInfiniteUsers,
 } from "../appwrite/api";
 import { QUERY_KEYS } from "./queryKeys";
 
@@ -39,6 +40,22 @@ export const useSignInAccountMutation = () => {
 export const useSignOutAccountMutation = () => {
 	return useMutation({
 		mutationFn: signOutAccount,
+	});
+};
+
+export const useGetUsersMutation = () => {
+	return useInfiniteQuery({
+		queryKey: [QUERY_KEYS.GET_INFINITE_USERS],
+		queryFn: getInfiniteUsers,
+		getNextPageParam: (lastPage) => {
+			if (!lastPage) throw Error;
+
+			if (lastPage && lastPage.documents.length === 0) return null;
+
+			const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
+
+			return lastId;
+		},
 	});
 };
 

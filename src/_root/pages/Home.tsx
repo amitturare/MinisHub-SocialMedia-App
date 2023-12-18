@@ -25,38 +25,41 @@ const Home = () => {
         );
     }
 
+    if (isPostLoading && !posts && isCreatorsLoading && !creators) {
+        return (
+            <div className="flex-center w-full h-full">
+                <Loader />
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-1">
             <div className="home-container">
                 <div className="home-posts">
                     <h2 className="h3-bold md:h2-bold text-left w-full">Home</h2>
-                    {isPostLoading && !posts ? (
-                        <Loader />
-                    ) : (
-                        <ul className="flex flex-col flex-1 gap-9 w-full">
-                            {posts?.documents.map((post: Models.Document) => {
-                                return (
-                                    <PostCard post={post} key={post.$id} />
-                                )
-                            })}
-                        </ul>
-                    )}
+                    {
+                        isPostLoading && !posts && !isCreatorsLoading ? (<Loader />) : (
+                            <ul className="flex flex-col flex-1 gap-9 w-full">
+                                {posts?.documents.map((post: Models.Document) => {
+                                    return (
+                                        <PostCard post={post} key={post.$id} />
+                                    )
+                                })}
+                            </ul>)}
                 </div>
             </div>
 
             <div className="home-creators">
                 <h3 className="h3-bold text-light-1">Top Creators</h3>
-                {isCreatorsLoading && !creators ? (
-                    <Loader />
-                ) : (
+                {isCreatorsLoading && !creators && !isPostLoading ? (<div className="flex-center w-full h-full"><Loader /></div>) : (
                     <ul className="grid 2xl:grid-cols-2 gap-6">
                         {creators?.documents.map((creator) => (
                             <li key={creator?.$id}>
                                 <CreatorCard user={creator} />
                             </li>
                         ))}
-                    </ul>
-                )}
+                    </ul>)}
             </div>
         </div>
     )

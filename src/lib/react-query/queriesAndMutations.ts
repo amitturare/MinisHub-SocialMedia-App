@@ -44,6 +44,13 @@ export const useSignOutAccountMutation = () => {
 	});
 };
 
+export const useGetCurrentUserMutation = () => {
+	return useQuery({
+		queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+		queryFn: getCurrentUser,
+	});
+};
+
 export const useGetInfiniteUsersMutation = () => {
 	return useInfiniteQuery({
 		queryKey: [QUERY_KEYS.GET_INFINITE_USERS],
@@ -144,13 +151,6 @@ export const useDeleteSavedPostMutation = () => {
 				queryKey: [QUERY_KEYS.GET_CURRENT_USER],
 			});
 		},
-	});
-};
-
-export const useGetCurrentUserMutation = () => {
-	return useQuery({
-		queryKey: [QUERY_KEYS.GET_CURRENT_USER],
-		queryFn: getCurrentUser,
 	});
 };
 

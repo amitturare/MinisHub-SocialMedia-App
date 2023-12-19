@@ -10,7 +10,6 @@ import { useGetRecentPostsMutation, useGetUsersMutation } from "@/lib/react-quer
 const Home = () => {
     const { data: posts, isPending: isPostLoading, isError: isErrorPosts } = useGetRecentPostsMutation();
     const { data: creators, isPending: isCreatorsLoading, isError: isErrorCreators } = useGetUsersMutation();
-    console.log(creators);
 
     if (isErrorPosts || isErrorCreators) {
         return (

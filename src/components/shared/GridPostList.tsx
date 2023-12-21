@@ -10,13 +10,14 @@ type GridPostListProps = {
     posts?: Models.Document[];
     showUser?: boolean;
     showStats?: boolean;
+    sideBar?: boolean;
 }
 
-const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostListProps) => {
+const GridPostList = ({ posts, showUser = true, showStats = true, sideBar = false }: GridPostListProps) => {
     const { user } = useUserContext()
 
     return (
-        <ul className="grid-container">
+        <ul className={sideBar ? "flex flex-col gap-6 mb-10" : "grid-container"}>
             {posts?.map((post) => (
                 <li key={post.$id} className="relative min-w-80 h-80">
                     <Link to={`/posts/${post.$id}`} className="grid-post_link">

@@ -31,6 +31,11 @@ const GridPostList = ({ posts, showUser = true, showStats = true, sideBar = fals
                                 <p className="line-clamp-1">{post.creator.name}</p>
                             </div>
                         )}
+                        {(sideBar && !showUser) && (
+                            <div className="flex items-center justify-start gap-2 flex-1">
+                                <p className="line-clamp-1">{post.caption}</p>
+                            </div>
+                        )}
                         {showStats && <PostStats post={post} userId={user.id} />}
                     </div>
                 </li>

@@ -47,4 +47,13 @@ export type INewUser = {
 	password: string;
 };
 
+export type IUpdateUser = {
+	userId: string;
+	name: string;
+	bio: string;
+	imageId: string;
+	imageUrl: URL | string;
+	file: File[];
+};
+
 export type ISigningInUser = { email: string; password: string };

@@ -82,7 +82,7 @@ const PostForm = ({ post, action }: PostFormProps) => {
 
         navigate("/")
     }
-    console.log(post?.imageUrl);
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">

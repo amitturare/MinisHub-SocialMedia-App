@@ -5,7 +5,7 @@ import {
 	useInfiniteQuery, // Infinite Scrolling
 } from "@tanstack/react-query";
 
-import { INewPost, INewUser, ISigningInUser, IUpdatePost } from "@/types";
+import { INewPost, INewUser, ISigningInUser, IUpdatePost, IUpdateUser } from "@/types";
 import {
 	createUserAccount,
 	signInAccount,
@@ -23,6 +23,8 @@ import {
 	searchPosts,
 	getInfiniteUsers,
 	getUsers,
+	getUserById,
+	updateUser,
 } from "../appwrite/api";
 import { QUERY_KEYS } from "./queryKeys";
 
@@ -48,6 +50,30 @@ export const useGetCurrentUserMutation = () => {
 	return useQuery({
 		queryKey: [QUERY_KEYS.GET_CURRENT_USER],
 		queryFn: getCurrentUser,
+	});
+};
+
+export const useGetUserByIdMutation = (userId: string) => {
+	return useQuery({
+		queryKey: [QUERY_KEYS.GET_CURRENT_USER, userId],
+		queryFn: () => getUserById(userId),
+		enabled: !!userId,
+	});
+};
+
+export const useUpdateUserMutation = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (data: IUpdateUser) => updateUser(data),
+		onSuccess: (data) => {
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.GET_CURRENT_USER],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id],
+			});
+		},
 	});
 };
 

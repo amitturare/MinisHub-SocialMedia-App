@@ -1,8 +1,8 @@
 import { ID, Query } from "appwrite";
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { appwriteConfig, account, avatars, databases, storage } from "./config";
 
-// USER REGISTRATION AND LOGIN
+// USER, REGISTRATION AND LOGIN
 export async function createUserAccount(user: INewUser) {
 	try {
 		const newAccount = await account.create(ID.unique(), user.email, user.password, user.name);
@@ -114,6 +114,70 @@ export async function getUsers() {
 		if (!users) throw Error;
 
 		return users;
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+export async function getUserById(id: string) {
+	try {
+		const user = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.usersCollectionId, id);
+
+		if (!user) {
+			throw Error;
+		}
+
+		return user;
+	} catch (e) {
+		console.log(e);
+	}
+}
+
+export async function updateUser(user: IUpdateUser) {
+	try {
+		const hasFileToUpdate = user.file.length > 0;
+		let image = {
+			imageUrl: user.imageUrl,
+			imageId: user.imageId,
+		};
+
+		if (hasFileToUpdate) {
+			// Upload img to storage
+			const uploadedFile = await uploadFile(user.file[0]);
+			if (!uploadedFile) throw Error;
+
+			// Get file url
+			const fileUrl = await getFilePreview(uploadedFile.$id);
+			if (!fileUrl) {
+				await deleteFile(uploadedFile.$id);
+				throw Error;
+			}
+
+			image = { ...image, imageUrl: fileUrl.toString(), imageId: uploadedFile.$id };
+		}
+        
+		const updatedUser = await databases.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.postsCollectionId,
+			user.userId,
+			{
+				imageUrl: image.imageUrl,
+				imageId: image.imageId,
+				name: user.name,
+				bio: user.bio,
+			}
+		);
+
+		if (!updatedUser && hasFileToUpdate) {
+			await deleteFile(image.imageId);
+			throw Error;
+		}
+
+		if (user.imageId && hasFileToUpdate) {
+			await deleteFile(user.imageId);
+		}
+
+		return updatedUser;
 	} catch (e) {
 		console.log(e);
 	}
@@ -260,6 +324,10 @@ export async function deleteSavedPost(savedRecordId: string) {
 export async function getPostById(postId: string) {
 	try {
 		const post = await databases.getDocument(appwriteConfig.databaseId, appwriteConfig.postsCollectionId, postId);
+
+		if (!post) {
+			throw Error;
+		}
 
 		return post;
 	} catch (e) {

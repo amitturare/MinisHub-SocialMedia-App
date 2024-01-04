@@ -2,7 +2,7 @@ import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Models } from "appwrite"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import {
     Form,
@@ -143,7 +143,9 @@ const PostForm = ({ post, action }: PostFormProps) => {
                 />
 
                 <div className="flex gap-4 items-center justify-end">
-                    <Button type="button" className="shad-button_dark_4">Cancel</Button>
+                    <Link to="/">
+                        <Button type="button" className="shad-button_dark_4">Cancel</Button>
+                    </Link>
                     <Button type="submit" className="shad-button_primary whitespace-nowrap" disabled={isLoadingCreate || isLoadingUpdate}>
                         {isLoadingCreate || isLoadingUpdate ? 'Loading...' : `${action} Post`}
                     </Button>

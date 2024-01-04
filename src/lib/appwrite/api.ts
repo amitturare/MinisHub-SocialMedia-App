@@ -158,7 +158,7 @@ export async function updateUser(user: IUpdateUser) {
         
 		const updatedUser = await databases.updateDocument(
 			appwriteConfig.databaseId,
-			appwriteConfig.postsCollectionId,
+			appwriteConfig.usersCollectionId,
 			user.userId,
 			{
 				imageUrl: image.imageUrl,

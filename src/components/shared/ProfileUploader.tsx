@@ -1,8 +1,6 @@
 import { useCallback, useState } from 'react'
 import { FileWithPath, useDropzone } from 'react-dropzone'
 
-import { Button } from '../ui/button'
-
 type ProfileUploaderProps = {
     fieldChange: (FILES: File[]) => void;
     mediaUrl: string;
@@ -10,7 +8,7 @@ type ProfileUploaderProps = {
 
 const ProfileUploader = ({ fieldChange, mediaUrl }: ProfileUploaderProps) => {
     const [file, setFile] = useState<File[]>([]);
-    const [fileUrl, setFileUrl] = useState(mediaUrl)
+    const [fileUrl, setFileUrl] = useState<string>(mediaUrl)
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         setFile(acceptedFiles)
@@ -25,26 +23,16 @@ const ProfileUploader = ({ fieldChange, mediaUrl }: ProfileUploaderProps) => {
     })
 
     return (
-        <div {...getRootProps()} className='flex flex-center flex-col bg-dark-3 rounded-xl cursor-pointer'>
+        <div {...getRootProps()} className='flex flex-center flex-col'>
             <input {...getInputProps()} className='cursor-pointer' />
-            {
-                fileUrl ? (
-                    <>
-                        <div className='flex flex-1 justify-center p-5 lg:p-10'>
-                            <img src={fileUrl} alt="image" className="file_uploader-img" />
-                        </div>
-                        <p className='file_uploader-label'>Click or drag to replace</p>
-                    </>
-                ) : (
-                    <div className='file_uploader-box'>
-                        <img src="/assets/icons/file-upload.svg" alt="file-uploader" width={96} height={77} />
-                        <h3 className='base-medium text-light-2 mb-2 mt-6'>Drag & Drop</h3>
-                        <p className='text-light-4 small-regular mb-6'>Upload or Paste image</p>
 
-                        <Button className='shad-button_dark_4'>Browse</Button>
-                    </div>
-                )
-            }
+            <div className="cursor-pointer flex-center gap-5">
+                <img src={fileUrl || "/assets/icons/profile-placeholder.svg"} alt="pf-image"
+                    className='h-24 w-24 rounded-full object-cover object-top' />
+                <p className="text-primary-500 small-regular md:base-semibold">
+                    Click to change profile photo
+                </p>
+            </div>
         </div>
     )
 }

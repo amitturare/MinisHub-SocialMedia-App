@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -28,9 +28,10 @@ const UpdateProfile = () => {
     const navigate = useNavigate()
 
     const { user, setUser } = useUserContext()
-    const { data: currUser, isLoading: isUserLoading } = useGetUserByIdMutation(id || "");
+    const { data: currUser } = useGetUserByIdMutation(id || "");
     const { mutateAsync: updateUser, isPending: isLoadingUpdate } = useUpdateUserMutation();
 
+    console.log(user);
     // 1. Define your form.
     const form = useForm<z.infer<typeof ProfileValidation>>({
         resolver: zodResolver(ProfileValidation),
@@ -39,9 +40,20 @@ const UpdateProfile = () => {
             file: [],
             username: user.username,
             email: user.email,
-            bio: user.bio || "",
+            bio: user.bio,
         },
     })
+    // console.log(user?.name);
+    console.log(user);
+    // console.log(form.formState.defaultValues);
+
+    if (!currUser) {
+        return (
+            <div className="flex-center w-full h-full">
+                <Loader />
+            </div>
+        )
+    }
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof ProfileValidation>) {
@@ -76,13 +88,7 @@ const UpdateProfile = () => {
         return navigate(`/profile/${id}`);
     }
 
-    if (isUserLoading) {
-        return (
-            <div className="flex-center w-full h-full">
-                <Loader />
-            </div>
-        )
-    }
+
 
     return (
         <div className="flex flex-1">
@@ -164,7 +170,9 @@ const UpdateProfile = () => {
                         />
 
                         <div className="flex gap-4 items-center justify-end">
-                            <Button type="button" className="shad-button_dark_4">Cancel</Button>
+                            <Link to="/">
+                                <Button type="button" className="shad-button_dark_4">Cancel</Button>
+                            </Link>
                             <Button type="submit" className="shad-button_primary whitespace-nowrap" disabled={isLoadingUpdate}>
                                 {isLoadingUpdate ? 'Loading...' : `Update Profile`}
                             </Button>

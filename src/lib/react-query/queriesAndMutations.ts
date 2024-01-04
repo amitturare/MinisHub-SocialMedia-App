@@ -55,7 +55,7 @@ export const useGetCurrentUserMutation = () => {
 
 export const useGetUserByIdMutation = (userId: string) => {
 	return useQuery({
-		queryKey: [QUERY_KEYS.GET_CURRENT_USER, userId],
+		queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
 		queryFn: () => getUserById(userId),
 		enabled: !!userId,
 	});
@@ -65,7 +65,7 @@ export const useUpdateUserMutation = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (data: IUpdateUser) => updateUser(data),
+		mutationFn: (user: IUpdateUser) => updateUser(user),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({
 				queryKey: [QUERY_KEYS.GET_CURRENT_USER],

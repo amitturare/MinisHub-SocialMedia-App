@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react'
 import { FileWithPath, useDropzone } from 'react-dropzone'
 
-type ProfileUploaderProps = {
+type FileUploaderProps = {
     fieldChange: (FILES: File[]) => void;
-    mediaUrl: string;
+    // mediaUrl: string;
+    setFileUrl: (url: string) => void;
 }
 
-const ProfileUploader = ({ fieldChange, mediaUrl }: ProfileUploaderProps) => {
+const ProfileUploader = ({ fieldChange, setFileUrl }: FileUploaderProps) => {
     const [file, setFile] = useState<File[]>([]);
-    const [fileUrl, setFileUrl] = useState<string>(mediaUrl)
 
     const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
         setFile(acceptedFiles)
@@ -23,16 +23,9 @@ const ProfileUploader = ({ fieldChange, mediaUrl }: ProfileUploaderProps) => {
     })
 
     return (
-        <div {...getRootProps()} className='flex flex-center flex-col'>
+        <div {...getRootProps()} className='flex flex-center flex-col bg-dark-3 rounded-xl cursor-pointer'>
             <input {...getInputProps()} className='cursor-pointer' />
-
-            <div className="cursor-pointer flex-center gap-5">
-                <img src={fileUrl || "/assets/icons/profile-placeholder.svg"} alt="pf-image"
-                    className='h-24 w-24 rounded-full object-cover object-top' />
-                <p className="text-primary-500 small-regular md:base-semibold">
-                    Click to change profile photo
-                </p>
-            </div>
+            Change image
         </div>
     )
 }

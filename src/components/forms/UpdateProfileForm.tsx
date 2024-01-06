@@ -1,4 +1,6 @@
+import { useState } from "react"
 import { Models } from "appwrite"
+import { avatars } from "@/lib/appwrite/config"
 import { Link, useNavigate } from "react-router-dom"
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -12,15 +14,21 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast"
-import ProfileUploader from "@/components/shared/ProfileUploader";
+import ProfileUploader from "../shared/ProfileUploader"
 
 import { ProfileValidation } from "@/lib/validation"
 import { useUserContext } from "@/context/AuthContext"
-import { useUpdateUserMutation } from "@/lib/react-query/queriesAndMutations"
+import { useDeleteFileMutation, useUpdateUserMutation } from "@/lib/react-query/queriesAndMutations"
 
 type UpdateProfileFormProps = {
     currUser?: Models.Document;
@@ -31,7 +39,8 @@ const UpdateProfileForm = ({ currUser }: UpdateProfileFormProps) => {
     const navigate = useNavigate()
 
     const { user, setUser } = useUserContext()
-    const { mutateAsync: updateUser, isPending: isLoadingUpdate } = useUpdateUserMutation();
+    const { mutateAsync: updateUser, isPending: isLoadingUpdate } = useUpdateUserMutation()
+    const { mutateAsync: deleteFile } = useDeleteFileMutation()
 
     // 1. Define your form.
     const form = useForm<z.infer<typeof ProfileValidation>>({
@@ -45,6 +54,18 @@ const UpdateProfileForm = ({ currUser }: UpdateProfileFormProps) => {
         },
     })
 
+    const [fileUrl, setFileUrl] = useState<string>(currUser?.imageUrl)
+    // const [isRemoved, setIsRemoved] = useState<boolean>(false);
+
+    async function onRemoveImageHandler() {
+        await deleteFile(currUser?.imageId);
+
+        const avatarUrl = avatars.getInitials(user.name);
+        setFileUrl(avatarUrl.href)
+        // setIsRemoved(true);
+    }
+
+
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof ProfileValidation>) {
         // Do something with the form values.
@@ -53,11 +74,9 @@ const UpdateProfileForm = ({ currUser }: UpdateProfileFormProps) => {
         // if (!currUser) throw Error;
 
         const updatedUser = await updateUser({
+            ...values,
             userId: user.id,
-            name: values.name,
-            file: values.file,
-            bio: values.bio,
-            imageUrl: currUser?.imageUrl,
+            imageUrl: fileUrl,
             imageId: currUser?.imageId,
         })
 
@@ -78,23 +97,44 @@ const UpdateProfileForm = ({ currUser }: UpdateProfileFormProps) => {
         return navigate(`/profile/${currUser?.$id}`);
     }
 
-
-
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-9 w-full max-w-5xl">
-                <FormField
-                    control={form.control}
-                    name="file"
-                    render={({ field }) => (
-                        <FormItem className="flex">
-                            <FormControl>
-                                <ProfileUploader fieldChange={field.onChange} mediaUrl={currUser?.imageUrl} />
-                            </FormControl>
-                            <FormMessage className="shad-form_message" />
-                        </FormItem>
-                    )}
-                />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <img src={fileUrl || "/assets/icons/profile-placeholder.svg"} alt="pf-image"
+                            className='h-24 w-24 rounded-full object-cover object-top' />
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent className="bg-dark-4 border-none flex flex-col gap-1" side="right" sideOffset={15}>
+                        <DropdownMenuItem className="cursor-pointer hover:bg-dark-3" onSelect={onRemoveImageHandler}>
+                            Remove image
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer hover:bg-dark-3">
+                            <FormField
+                                control={form.control}
+                                name="file"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            {/* <Dropzone onDrop={onChangeImageHandler} fieldChange={field.onChange}>
+                                                {({ getRootProps, getInputProps }) => (
+                                                    <div {...getRootProps()}>
+                                                        <input {...getInputProps()} className='cursor-pointer' />
+                                                        <p>Change image</p>
+                                                    </div>
+                                                )}
+                                            </Dropzone> */}
+                                            <ProfileUploader fieldChange={field.onChange} setFileUrl={setFileUrl} />
+                                        </FormControl>
+                                        <FormMessage className="shad-form_message" />
+                                    </FormItem>
+                                )}
+                            />
+
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
 
                 <FormField
                     control={form.control}
@@ -161,7 +201,7 @@ const UpdateProfileForm = ({ currUser }: UpdateProfileFormProps) => {
                     </Button>
                 </div>
             </form>
-        </Form>
+        </Form >
     )
 }
 

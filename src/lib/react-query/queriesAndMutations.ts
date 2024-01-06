@@ -25,6 +25,7 @@ import {
 	getUsers,
 	getUserById,
 	updateUser,
+	deleteFile,
 } from "../appwrite/api";
 import { QUERY_KEYS } from "./queryKeys";
 
@@ -74,6 +75,12 @@ export const useUpdateUserMutation = () => {
 				queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id],
 			});
 		},
+	});
+};
+
+export const useDeleteFileMutation = () => {
+	return useMutation({
+		mutationFn: deleteFile,
 	});
 };
 

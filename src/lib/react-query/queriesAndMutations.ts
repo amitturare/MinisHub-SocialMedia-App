@@ -2,7 +2,6 @@ import {
 	useQuery, // Fetching the data
 	useMutation, // Modifying the data
 	useQueryClient,
-	useInfiniteQuery, // Infinite Scrolling
 } from "@tanstack/react-query";
 
 import { INewPost, INewUser, ISigningInUser, IUpdatePost, IUpdateUser } from "@/types";
@@ -85,18 +84,9 @@ export const useDeleteFileMutation = () => {
 };
 
 export const useGetInfiniteUsersMutation = () => {
-	return useInfiniteQuery({
+	return useQuery({
 		queryKey: [QUERY_KEYS.GET_INFINITE_USERS],
 		queryFn: getInfiniteUsers,
-		getNextPageParam: (lastPage ) => {
-			if (!lastPage) throw Error;
-
-			if (lastPage && lastPage.documents.length === 0) return null;
-
-			const lastId = lastPage.documents[lastPage.documents.length - 1].$id;
-
-			return lastId;
-		},
 	});
 };
 

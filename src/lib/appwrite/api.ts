@@ -82,18 +82,11 @@ export async function signOutAccount() {
 	}
 }
 
-export async function getInfiniteUsers({ pageParam }: { pageParam: number }) {
-	const queries = [Query.limit(20)];
-
-	if (pageParam) {
-		queries.push(Query.cursorAfter(pageParam.toString()));
-	}
-
+export async function getInfiniteUsers() {
 	try {
 		const users = await databases.listDocuments(
 			appwriteConfig.databaseId,
 			appwriteConfig.usersCollectionId,
-			queries
 		);
 
 		if (!users) throw Error;

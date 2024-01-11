@@ -1,4 +1,4 @@
-import { Link, Outlet, Route, Routes, useLocation, useParams } from "react-router-dom"
+import { Link, useParams } from "react-router-dom"
 
 import Loader from "@/components/shared/Loader"
 import StatBlock from "@/components/shared/StatBlock"
@@ -15,7 +15,6 @@ import { useState } from "react"
 const Profile = () => {
     const { id } = useParams()
     const { user } = useUserContext()
-    const { pathname } = useLocation()
 
     const { data: currUser, isLoading: isUserLoading } = useGetUserByIdMutation(id || "");
 

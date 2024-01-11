@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
+import { useState } from 'react'
 
 import { Input } from '@/components/ui/input'
 import SearchResults from '@/components/shared/SearchResults'
@@ -11,16 +10,13 @@ import useDebounce from '@/hooks/useDebounce'
 
 
 const Explore = () => {
-    const { ref, inView } = useInView()
-    const { data: posts, fetchNextPage, hasNextPage } = useGetPostsMutation();
+    const { data: posts } = useGetPostsMutation();
 
     const [searchVal, setSearchVal] = useState('')
     const debouncedValue = useDebounce(searchVal, 500);
     const { data: searchedPosts, isFetching: isSearchFetching } = useSearchPostsMutation(debouncedValue)
 
-    useEffect(() => {
-        if (inView && !searchVal) fetchNextPage()
-    }, [inView, searchVal])
+    console.log(posts);
 
     if (!posts) {
         return (
@@ -31,7 +27,7 @@ const Explore = () => {
     }
 
     const shouldShowSearchResults = searchVal !== '';
-    const shouldShowPosts = !shouldShowSearchResults && posts.pages.every((item) => item?.documents.length === 0);
+    // const shouldShowPosts = !shouldShowSearchResults && posts.documents.every((item) => item?.documents.length === 0);
 
     return (
         <div className="explore-container">
@@ -70,19 +66,14 @@ const Explore = () => {
                 {
                     shouldShowSearchResults ? (
                         <SearchResults isSearchFetching={isSearchFetching} searchedPosts={searchedPosts} />
-                    ) : shouldShowPosts ? (
+                    ) : !posts ? (
                         <p className='text-light-4 mt-10 text-center w-full'>--- End of posts ---</p>
-                    ) : posts.pages.map((item, index) => (
-                        <GridPostList key={`pages-${index}`} posts={item?.documents} />
-                    ))
+                    ) : 
+                        <GridPostList posts={posts?.documents} />
+                    
                 }
             </div>
 
-            {hasNextPage && !searchVal && (
-                <div ref={ref} className='mt-10'>
-                    <Loader />
-                </div>
-            )}
         </div>
     )
 }

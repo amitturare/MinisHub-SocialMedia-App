@@ -12,7 +12,7 @@ import PostStats from "@/components/shared/PostStats";
 const PostDetails = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    const { data: post, isPending: isPostLoading } = useGetPostByIdMutation(id);
+    const { data: post, isPending: isPostLoading } = useGetPostByIdMutation(id || "");
     const { mutate: deletePost } = useDeletePostMutation();
     const { user } = useUserContext()
 
@@ -44,7 +44,7 @@ const PostDetails = () => {
                             <div className="flex flex-col">
                                 <p className="base-medium lg:body-bold text-light-1">{post?.creator.name}</p>
                                 <div className="flex-center gap-2 text-light-3">
-                                    <p className="subtle-semibold lg:small-regular">{timeAgo(post?.$createdAt)}</p>
+                                    <p className="subtle-semibold lg:small-regular">{timeAgo(post?.$createdAt || "")}</p>
                                     -
                                     <p className="subtle-semibold lg:small-regular flex-center gap-1">
                                         <img src="/assets/icons/location.svg" alt="edit" width={12} height={12} />

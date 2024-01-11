@@ -8,7 +8,7 @@ import { useGetCurrentUserMutation, useGetPostByIdMutation } from "@/lib/react-q
 
 const EditPost = () => {
     const { id } = useParams();
-    const { data: post, isPending: isPostLoading } = useGetPostByIdMutation(id);
+    const { data: post, isPending: isPostLoading } = useGetPostByIdMutation(id || "");
     const { data: user, isLoading: isUserLoading } = useGetCurrentUserMutation();
 
     if (isPostLoading) return <Loader />

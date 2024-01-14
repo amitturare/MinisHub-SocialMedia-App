@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Loader from "@/components/shared/Loader";
@@ -25,6 +26,9 @@ const PostDetails = () => {
 
     return (
         <div className="post_details-container">
+            <Helmet>
+                <title>{post?.creator.name} - {post?.caption}</title>
+            </Helmet>
             <div className="post_details-card">
                 <img
                     src={post?.imageUrl}

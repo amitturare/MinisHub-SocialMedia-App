@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Models } from "appwrite";
 
 import Loader from "@/components/shared/Loader";
@@ -34,6 +35,9 @@ const Home = () => {
 
     return (
         <div className="flex flex-1">
+            <Helmet>
+                <title>Home</title>
+            </Helmet>
             <div className="home-container">
                 <div className="home-posts">
                     <h2 className="h3-bold md:h2-bold text-left w-full">Home</h2>

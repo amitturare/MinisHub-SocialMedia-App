@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { Models } from "appwrite";
 
 import Loader from "@/components/shared/Loader";
@@ -24,6 +25,9 @@ const Saved = () => {
 
     return (
         <div className="saved-container">
+            <Helmet>
+                <title>Saved Posts</title>
+            </Helmet>
             <div className="flex gap-2 w-full max-w-5xl">
                 <img
                     src="/assets/icons/save.svg"

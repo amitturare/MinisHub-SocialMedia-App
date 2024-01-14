@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async"
+
 import PostForm from "@/components/forms/PostForm"
 import Loader from '@/components/shared/Loader'
 import PostSidebar from "@/components/shared/PostSidebar";
@@ -9,6 +11,9 @@ const CreatePost = () => {
 
     return (
         <div className="flex flex-1">
+            <Helmet>
+                <title>Create Post</title>
+            </Helmet>
             <div className="common-container">
                 <div className="max-w-5xl flex-start gap-3 justify-start w-full">
                     <img src="/assets/icons/add-post.svg" alt="add" height={36} width={36} />

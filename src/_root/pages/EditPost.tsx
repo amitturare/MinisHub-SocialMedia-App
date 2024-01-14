@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import { useParams } from "react-router-dom"
 
 import Loader from "@/components/shared/Loader";
@@ -14,6 +15,9 @@ const EditPost = () => {
     if (isPostLoading) return <Loader />
     return (
         <div className="flex flex-1">
+            <Helmet>
+                <title>Edit Post</title>
+            </Helmet>
             <div className="common-container">
                 <div className="max-w-5xl flex-start gap-3 justify-start w-full">
                     <img src="/assets/icons/edit-post.svg" alt="edit-post" height={36} width={36} />

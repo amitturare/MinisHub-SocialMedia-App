@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async"
 import { Link, useParams } from "react-router-dom"
 
 import Loader from "@/components/shared/Loader"
@@ -5,7 +6,7 @@ import StatBlock from "@/components/shared/StatBlock"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import GridPostList from "@/components/shared/GridPostList"
-import LikedAndSavedPosts from "./LikedAndSavedPosts"
+import LikedAndSavedPosts from "../../components/shared/LikedAndSavedPosts"
 
 
 import { useUserContext } from "@/context/AuthContext"
@@ -33,6 +34,9 @@ const Profile = () => {
 
     return (
         <div className="profile-container">
+            <Helmet>
+                <title>{currUser?.name} (@{currUser?.username})</title>
+            </Helmet>
             <div className="profile-inner_container">
                 <div className="flex xl:flex-row flex-col max-xl:items-center flex-1 gap-7">
                     <img src={currUser?.imageUrl || "/assets/icons/profile-placeholder.svg"} alt="profile-pic" className="w-28 h-28 lg:h-36 lg:w-36 rounded-full" />

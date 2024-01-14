@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet-async";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -76,6 +77,9 @@ const SignUpForm = () => {
 
     return (
         <Form {...form}>
+            <Helmet>
+                <title>Minis Hub | Sign Up</title>
+            </Helmet>
             <div className="sm:w-420 flex-center flex-col">
                 <img src="/assets/images/justLogo.svg" className="w-20 sm:w-24" alt="logo" />
 

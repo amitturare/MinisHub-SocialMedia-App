@@ -1,3 +1,5 @@
+import { Helmet } from "react-helmet-async";
+
 import Loader from "@/components/shared/Loader";
 import UpdateProfileForm from "@/components/forms/UpdateProfileForm";
 
@@ -10,6 +12,9 @@ const UpdateProfile = () => {
 
     return (
         <div className="flex flex-1">
+            <Helmet>
+                <title>Update Profile - @{currUser?.username}</title>
+            </Helmet>
             <div className="common-container">
                 <div className="max-w-5xl flex-start gap-3 justify-start w-full">
                     <img src="/assets/icons/edit-post.svg" alt="update-profile" height={36} width={36} />
